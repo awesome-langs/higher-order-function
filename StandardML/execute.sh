@@ -1,0 +1,1 @@
+mlton -output example example.mlb && ./example
