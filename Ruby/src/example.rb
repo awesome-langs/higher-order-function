@@ -14,42 +14,42 @@ end
 
 def p_e_bool()
     lambda do |b|
-        raise "Not a boolean" unless b.is_a?(TrueClass) || b.is_a?(FalseClass)
+        raise "" unless b.is_a?(TrueClass) || b.is_a?(FalseClass)
         b ? "true" : "false"
     end
 end
 
 def p_e_int()
     lambda do |i|
-        raise "Not an integer" unless i.is_a?(Integer)
+        raise "" unless i.is_a?(Integer)
         i.to_s
     end
 end
 
 def p_e_double()
     lambda do |d|
-        raise "Not a number" unless d.is_a?(Float)
+        raise "" unless d.is_a?(Float)
         "%.6f" % d
     end
 end
 
 def p_e_string()
     lambda do |s|
-        raise "Not a string" unless s.is_a?(String)
+        raise "" unless s.is_a?(String)
         "\"" + p_e_escape_string(s) + "\""
     end
 end
 
 def p_e_list(f0)
     lambda do |lst|
-        raise "Not a list" unless lst.is_a?(Array)
+        raise "" unless lst.is_a?(Array)
         "[" + lst.map(&f0).join(", ") + "]"
     end
 end
 
 def p_e_ulist(f0)
     lambda do |lst|
-        raise "Not a list" unless lst.is_a?(Array)
+        raise "" unless lst.is_a?(Array)
         "[" + lst.map(&f0).sort.join(", ") + "]"
     end
 end
@@ -57,7 +57,7 @@ end
 def p_e_idict(f0)
     f1 = lambda { |k, v| p_e_int.call(k) + "=>" + f0.call(v) }
     lambda do |dct|
-        raise "Not a dictionary" unless dct.is_a?(Hash)
+        raise "" unless dct.is_a?(Hash)
         "{" + dct.map(&f1).join(", ") + "}"
     end
 end
@@ -65,7 +65,7 @@ end
 def p_e_sdict(f0)
     f1 = lambda { |k, v| p_e_string.call(k) + "=>" + f0.call(v) }
     lambda do |dct|
-        raise "Not a dictionary" unless dct.is_a?(Hash)
+        raise "" unless dct.is_a?(Hash)
         "{" + dct.map(&f1).join(", ") + "}"
     end
 end

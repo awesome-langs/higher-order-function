@@ -15,7 +15,7 @@ defmodule Example do
     
     def p_e_bool do
         fn b -> 
-            if !is_boolean(b) do
+            unless is_boolean(b) do
                 raise ArgumentError
             end
             if b, do: "true", else: "false"
@@ -24,7 +24,7 @@ defmodule Example do
     
     def p_e_int do
         fn i -> 
-            if !is_integer(i) do
+            unless is_integer(i) do
                 raise ArgumentError
             end
             Integer.to_string(i)
@@ -33,7 +33,7 @@ defmodule Example do
 
     def p_e_double do
         fn d -> 
-            if !is_float(d) do
+            unless is_float(d) do
                 raise ArgumentError
             end
             :erlang.float_to_binary(d, decimals: 6)
@@ -42,7 +42,7 @@ defmodule Example do
 
     def p_e_string do
         fn s -> 
-            if !is_binary(s) do
+            unless is_binary(s) do
                 raise ArgumentError
             end
             "\"" <> p_e_escape_string(s) <> "\""
@@ -51,7 +51,7 @@ defmodule Example do
 
     def p_e_list(f0) do
         fn lst -> 
-            if !is_list(lst) do
+            unless is_list(lst) do
                 raise ArgumentError
             end
             "[" <> (lst |> Enum.map(f0) |> Enum.join(", ")) <> "]" 
@@ -60,7 +60,7 @@ defmodule Example do
     
     def p_e_ulist(f0) do
         fn lst ->
-            if !is_list(lst) do
+            unless is_list(lst) do
                 raise ArgumentError
             end
             "[" <> (lst |> Enum.map(f0) |> Enum.sort() |> Enum.join(", ")) <> "]"
@@ -70,7 +70,7 @@ defmodule Example do
     def p_e_idict(f0) do
         f1 = fn {k, v} -> p_e_int().(k) <> "=>" <> f0.(v) end
         fn dct -> 
-            if !is_map(dct) do
+            unless is_map(dct) do
                 raise ArgumentError
             end            
             "{" <> (dct |> Enum.map(f1) |> Enum.join(", ")) <> "}"
@@ -80,7 +80,7 @@ defmodule Example do
     def p_e_sdict(f0) do
         f1 = fn {k, v} -> p_e_string().(k) <> "=>" <> f0.(v) end
         fn dct -> 
-            if !is_map(dct) do
+            unless is_map(dct) do
                 raise ArgumentError
             end            
             "{" <> (dct |> Enum.map(f1) |> Enum.join(", ")) <> "}"

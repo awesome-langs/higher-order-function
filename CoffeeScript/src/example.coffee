@@ -11,44 +11,44 @@ p_e_escapeString = (s) ->
 
 p_e_bool = ->
     (b) ->
-        throw new Error() if typeof b isnt "boolean"
+        throw new Error() unless typeof b is "boolean"
         if b then "true" else "false"
 
 p_e_int = ->
     (i) ->
-        throw new Error() if typeof i isnt "number" or not Number.isInteger(i)
+        throw new Error() unless typeof i is "number" and Number.isInteger(i)
         i.toString()
 
 p_e_double = ->
     (d) ->
-        throw new Error() if typeof d isnt "number"
+        throw new Error() unless typeof d is "number"
         d.toFixed(6)
 
 p_e_string = ->
     (s) ->
-        throw new Error() if typeof s isnt "string"
+        throw new Error() unless typeof s is "string"
         "\"" + p_e_escapeString(s) + "\""
 
 p_e_list = (f0) ->
     (lst) ->
-        throw new Error() if not Array.isArray(lst)
+        throw new Error() unless Array.isArray(lst)
         "[" + lst.map(f0).join(", ") + "]"
 
 p_e_ulist = (f0) ->
     (lst) ->
-        throw new Error() if not Array.isArray(lst)
+        throw new Error() unless Array.isArray(lst)
         "[" + lst.map(f0).sort().join(", ") + "]"
 
 p_e_idict = (f0) ->
     f1 = ([k, v]) -> p_e_int()(k) + "=>" + f0(v)
     (dct) ->
-        throw new Error() if not dct instanceof Map
+        throw new Error() unless dct instanceof Map
         "{" + [...dct].map(f1).join(", ") + "}"
 
 p_e_sdict = (f0) ->
     f1 = ([k, v]) -> p_e_string()(k) + "=>" + f0(v)
     (dct) ->
-        throw new Error() if not dct instanceof Map        
+        throw new Error() unless dct instanceof Map        
         "{" + [...dct].map(f1).join(", ") + "}"
 
 p_e_option = (f0) ->

@@ -29,21 +29,21 @@ sub p_e_string() {
 }
 
 sub p_e_list($f0) {
-    return -> $lst { "[" ~ $lst.map($f0).join(", ") ~ "]" };
+    return -> Array $lst { "[" ~ $lst.map($f0).join(", ") ~ "]" };
 }
 
 sub p_e_ulist($f0) {
-    return -> $lst { "[" ~ $lst.map($f0).sort.join(", ") ~ "]" };
+    return -> Array $lst { "[" ~ $lst.map($f0).sort.join(", ") ~ "]" };
 }
 
 sub p_e_idict($f0) {
     my $f1 = -> $kv { p_e_int().($kv.key) ~ "=>" ~ $f0.($kv.value) };
-    return -> $dct { "\{" ~ $dct.map($f1).sort.join(", ") ~ "\}" };
+    return -> Hash $dct { "\{" ~ $dct.map($f1).sort.join(", ") ~ "\}" };
 }
 
 sub p_e_sdict($f0) {
     my $f1 = -> $kv { p_e_string().($kv.key) ~ "=>" ~ $f0.($kv.value) };
-    return -> $dct { "\{" ~ $dct.map($f1).sort.join(", ") ~ "\}" };
+    return -> Hash $dct { "\{" ~ $dct.map($f1).sort.join(", ") ~ "\}" };
 }
 
 sub p_e_option($f0) {

@@ -13,44 +13,44 @@
 
 (defn p_e_bool []
     (fn [b]
-        (when (not (boolean? b)) (throw IllegalArgumentException))
+        (when-not (boolean? b) (throw IllegalArgumentException))
         (if b "true" "false")))
 
 (defn p_e_int []
     (fn [i]
-        (when (not (int? i)) (throw IllegalArgumentException))
+        (when-not (int? i) (throw IllegalArgumentException))
         (str i)))
 
 (defn p_e_double []
     (fn [d]        
-        (when (not (double? d)) (throw IllegalArgumentException))
+        (when-not (double? d) (throw IllegalArgumentException))
         (format "%.6f" d)))
 
 (defn p_e_string []
     (fn [s]
-        (when (not (string? s)) (throw IllegalArgumentException))
+        (when-not (string? s) (throw IllegalArgumentException))
         (str "\"" (p_e_escape-string s) "\"")))
 
 (defn p_e_list [f0]
     (fn [lst]
-        (when (not (vector? lst)) (throw IllegalArgumentException))
+        (when-not (vector? lst) (throw IllegalArgumentException))
         (str "[" (string/join ", " (map f0 lst)) "]")))
 
 (defn p_e_ulist [f0]
     (fn [lst]
-        (when (not (vector? lst)) (throw IllegalArgumentException))
+        (when-not (vector? lst) (throw IllegalArgumentException))
         (str "[" (string/join ", " (sort (map f0 lst))) "]")))
 
 (defn p_e_idict [f0]
     (let [f1 (fn [[k v]] (str ((p_e_int) k) "=>" (f0 v)))]
         (fn [dct]
-            (when (not (map? dct)) (throw IllegalArgumentException))
+            (when-not (map? dct) (throw IllegalArgumentException))
             (str "{" (string/join ", " (sort (map f1 dct))) "}"))))
 
 (defn p_e_sdict [f0]
     (let [f1 (fn [[k v]] (str ((p_e_string) k) "=>" (f0 v)))]
         (fn [dct]
-            (when (not (map? dct)) (throw IllegalArgumentException))
+            (when-not (map? dct) (throw IllegalArgumentException))
             (str "{" (string/join ", " (sort (map f1 dct))) "}"))))
 
 (defn p_e_option [f0]

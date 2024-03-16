@@ -18,21 +18,21 @@ sub p_e_escape_string($s) {
 
 sub p_e_bool() {
     return sub($b) {
-        if (!is_bool($b)) { die; }
+        unless (is_bool($b)) { die; }
         return $b ? "true" : "false";
     };
 }
 
 sub p_e_int() {
     return sub($i) {
-        if (!($i =~ /^-?\d+\z/)) { die; }
+        unless ($i =~ /^-?\d+\z/) { die; }
         return $i;
     };
 }
 
 sub p_e_double() {
     return sub($d) {
-        if (!($d =~ /^-?(?:\d+\.?|\.\d)\d*\z/)) { die; }
+        unless ($d =~ /^-?(?:\d+\.?|\.\d)\d*\z/) { die; }
         return sprintf("%.6f", $d);
     };
 }
@@ -45,14 +45,14 @@ sub p_e_string() {
 
 sub p_e_list($f0) {
     return sub($lst) {
-        if(!(ref $lst eq "ARRAY")) { die; }
+        unless (ref $lst eq "ARRAY") { die; }
         return "[" . join(", ", map { $f0->($_) } @$lst) . "]";
     };
 }
 
 sub p_e_ulist($f0) {
     return sub($lst) {
-        if(!(ref $lst eq "ARRAY")) { die; }
+        unless (ref $lst eq "ARRAY") { die; }
         return "[" . join(", ", sort map { $f0->($_) } @$lst) . "]";
     };
 }
@@ -62,7 +62,7 @@ sub p_e_idict($f0) {
         return p_e_int()->($k) . "=>" . $f0->($v);
     };
     return sub($dct) {
-        if(!(ref $dct eq "HASH")) { die; }
+        unless (ref $dct eq "HASH") { die; }
         return "{" . join(", ", sort { $a <=> $b } pairmap { $f1->($a, $b) } %$dct) . "}";
     };
 }
@@ -72,7 +72,7 @@ sub p_e_sdict($f0) {
         return p_e_string()->($k) . "=>" . $f0->($v);
     };
     return sub($dct) {
-        if(!(ref $dct eq "HASH")) { die; }
+        unless (ref $dct eq "HASH") { die; }
         return "{" . join(", ", sort { $a <=> $b } pairmap { $f1->($a, $b) } %$dct) . "}";
     };
 }
