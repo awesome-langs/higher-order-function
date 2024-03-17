@@ -4,11 +4,10 @@
 (define (p_e_escape-string s)
     (define (p_e_escape-char c)
         (cond
-            [(char=? c #\newline) "\\n"]
-            [(char=? c #\return) "\\r"]
-            [(char=? c #\tab) "\\t"]
             [(char=? c #\\) "\\\\"]
             [(char=? c #\") "\\\""]
+            [(char=? c #\newline) "\\n"]
+            [(char=? c #\tab) "\\t"]
             [else (string c)]))
     (apply string-append (map p_e_escape-char (string->list s))))
 
@@ -25,7 +24,9 @@
 (define (p_e_double)
     (lambda (d) 
         (unless (real? d) (error 'failed))
-        (format #f "~1,6f" d)))
+        (let* ([s0 (format #f "~,7f" d)]
+            [s1 (substring s0 0 (- (string-length s0) 1))])
+            (if (string=? s1 "-0.000000") "0.000000" s1))))
 
 (define (p_e_string)
     (lambda (s) 
@@ -58,19 +59,40 @@
     (lambda (opt) (if opt (f0 opt) "null")))
 
 (let ([p_e_out (string-join (list
-        ((p_e_bool) #t)
-        ((p_e_int) 3)
-        ((p_e_double) 3.141592653)
-        ((p_e_double) 3.0)
-        ((p_e_string) "Hello, World!")
-        ((p_e_string) "!@#$%^&*()\\\"\n\t")
-        ((p_e_list (p_e_int)) '(1 2 3))
-        ((p_e_list (p_e_bool)) '(#t #f #t))
-        ((p_e_ulist (p_e_int)) '(3 2 1))
-        ((p_e_idict (p_e_string)) (alist->hash-table '((1 . "one") (2 . "two"))))
-        ((p_e_sdict (p_e_list (p_e_int))) (alist->hash-table '(("one" . (1 2 3)) ("two" . (4 5 6)))))
-        ((p_e_option (p_e_int)) 42)
-        ((p_e_option (p_e_int)) #f)) "\n")])
+            ((p_e_bool) #t)
+            ((p_e_bool) #f)
+            ((p_e_int) 3)
+            ((p_e_int) -107)
+            ((p_e_double) 0.0)
+            ((p_e_double) -0.0)
+            ((p_e_double) 3.0)
+            ((p_e_double) 31.4159265)
+            ((p_e_double) 123456.789)
+            ((p_e_string) "Hello, World!")
+            ((p_e_string) "!@#$%^&*()[]{}<>:;,.'\"?|")
+            ((p_e_string) "/\\\n\t")
+            ((p_e_list (p_e_int)) (list))
+            ((p_e_list (p_e_int)) (list 1 2 3))
+            ((p_e_list (p_e_bool)) (list #t #f #t))
+            ((p_e_list (p_e_string)) (list "apple" "banana" "cherry"))
+            ((p_e_list (p_e_list (p_e_int))) (list))
+            ((p_e_list (p_e_list (p_e_int))) (list (list 1 2 3) (list 4 5 6)))
+            ((p_e_ulist (p_e_int)) (list 3 2 1))
+            ((p_e_list (p_e_ulist (p_e_int))) (list (list 2 1 3) (list 6 5 4)))
+            ((p_e_ulist (p_e_list (p_e_int))) (list (list 4 5 6) (list 1 2 3)))
+            ((p_e_idict (p_e_int)) (alist->hash-table (list)))
+            ((p_e_idict (p_e_string)) (alist->hash-table (list (cons 1 "one") (cons 2 "two"))))
+            ((p_e_sdict (p_e_int)) (alist->hash-table (list (cons "one" 1) (cons "two" 2))))
+            ((p_e_idict (p_e_list (p_e_int))) (alist->hash-table (list)))
+            ((p_e_idict (p_e_list (p_e_int))) (alist->hash-table (list (cons 1 (list 1 2 3)) (cons 2 (list 4 5 6)))))
+            ((p_e_sdict (p_e_list (p_e_int))) (alist->hash-table (list (cons "one" (list 1 2 3)) (cons "two" (list 4 5 6)))))
+            ((p_e_list (p_e_idict (p_e_int))) (list (alist->hash-table (list (cons 1 2))) (alist->hash-table (list (cons 3 4)))))
+            ((p_e_idict (p_e_idict (p_e_int))) (alist->hash-table (list (cons 1 (alist->hash-table (list (cons 2 3)))) (cons 4 (alist->hash-table (list (cons 5 6)))))))
+            ((p_e_sdict (p_e_sdict (p_e_int))) (alist->hash-table (list (cons "one" (alist->hash-table (list (cons "two" 3)))) (cons "four" (alist->hash-table (list (cons "five" 6)))))))
+            ((p_e_option (p_e_int)) 42)
+            ((p_e_option (p_e_int)) #f)
+            ((p_e_list (p_e_option (p_e_int))) (list 1 #f 3))
+        ) "\n")])
     (let ((out-port (open-file "stringify.out" "w")))
         (display p_e_out out-port)
         (close-port out-port)))

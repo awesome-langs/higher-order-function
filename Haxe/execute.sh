@@ -1,1 +1,1 @@
-haxelib newrepo && haxelib install all --always && haxe -p ./src -L polygonal-printf -m Example.hx --neko example.n && neko example.n
+haxe -p ./src -m Example.hx --neko example.n && neko example.n

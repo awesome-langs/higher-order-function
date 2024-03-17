@@ -1,11 +1,10 @@
 fun p_e_escapeString(s: String): String {
     val p_e_escapeChar = { c: Char ->
         when (c) {
-            '\r' -> "\\r"
-            '\n' -> "\\n"
-            '\t' -> "\\t"
             '\\' -> "\\\\"
             '\"' -> "\\\""
+            '\n' -> "\\n"
+            '\t' -> "\\t"
             else -> c.toString()
         }
     }
@@ -21,7 +20,11 @@ fun p_e_int(): (Int) -> String {
 }
 
 fun p_e_double(): (Double) -> String {
-    return { d -> String.format("%.6f", d) }
+    return { d -> 
+        val s0 = String.format("%.7f", d)
+        val s1 = s0.substring(0, s0.length - 1)
+        if (s1 == "-0.000000") "0.000000" else s1
+    }
 }
 
 fun p_e_string(): (String) -> String {
@@ -53,18 +56,38 @@ fun <V> p_e_option(f0: (V) -> String): (V?) -> String {
 fun main() {
     val p_e_out = listOf(
         p_e_bool()(true),
+        p_e_bool()(false),
         p_e_int()(3),
-        p_e_double()(3.141592653),
+        p_e_int()(-107),
+        p_e_double()(0.0),
+        p_e_double()(-0.0),
         p_e_double()(3.0),
+        p_e_double()(31.4159265),
+        p_e_double()(123456.789),
         p_e_string()("Hello, World!"),
-        p_e_string()("!@#\$%^&*()\\\"\n\t"),
+        p_e_string()("!@#\$%^&*()[]{}<>:;,.'\"?|"),
+        p_e_string()("/\\\n\t"),
+        p_e_list(p_e_int())(listOf()),
         p_e_list(p_e_int())(listOf(1, 2, 3)),
         p_e_list(p_e_bool())(listOf(true, false, true)),
+        p_e_list(p_e_string())(listOf("apple", "banana", "cherry")),
+        p_e_list(p_e_list(p_e_int()))(listOf()),
+        p_e_list(p_e_list(p_e_int()))(listOf(listOf(1, 2, 3), listOf(4, 5, 6))),
         p_e_ulist(p_e_int())(listOf(3, 2, 1)),
+        p_e_list(p_e_ulist(p_e_int()))(listOf(listOf(2, 1, 3), listOf(6, 5, 4))),
+        p_e_ulist(p_e_list(p_e_int()))(listOf(listOf(4, 5, 6), listOf(1, 2, 3))),
+        p_e_idict(p_e_int())(mapOf()),
         p_e_idict(p_e_string())(mapOf(1 to "one", 2 to "two")),
+        p_e_sdict(p_e_int())(mapOf("one" to 1, "two" to 2)),
+        p_e_idict(p_e_list(p_e_int()))(mapOf()),
+        p_e_idict(p_e_list(p_e_int()))(mapOf(1 to listOf(1, 2, 3), 2 to listOf(4, 5, 6))),
         p_e_sdict(p_e_list(p_e_int()))(mapOf("one" to listOf(1, 2, 3), "two" to listOf(4, 5, 6))),
+        p_e_list(p_e_idict(p_e_int()))(listOf(mapOf(1 to 2), mapOf(3 to 4))),
+        p_e_idict(p_e_idict(p_e_int()))(mapOf(1 to mapOf(2 to 3), 4 to mapOf(5 to 6))),
+        p_e_sdict(p_e_sdict(p_e_int()))(mapOf("one" to mapOf("two" to 3), "four" to mapOf("five" to 6))),
         p_e_option(p_e_int())(42),
-        p_e_option(p_e_int())(null)
+        p_e_option(p_e_int())(null),
+        p_e_list(p_e_option(p_e_int()))(listOf(1, null, 3))
     ).joinToString("\n")
     val f = java.io.File("stringify.out")
     f.writeText(p_e_out)

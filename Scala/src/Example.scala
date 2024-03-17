@@ -3,11 +3,10 @@ import java.io.File
 object Example {
     def p_e_escapeString(s: String): String = {
         val p_e_escapeChar: Char => String = c => c match {
-            case '\r' => "\\r"
-            case '\n' => "\\n"
-            case '\t' => "\\t"
             case '\\' => "\\\\"
             case '\"' => "\\\""
+            case '\n' => "\\n"
+            case '\t' => "\\t"
             case c => c.toString
         }
         s.map(p_e_escapeChar).mkString
@@ -23,7 +22,11 @@ object Example {
     }
 
     def p_e_double(): Double => String = {
-        d => f"$d%.6f"
+        d => {
+            val s0 = f"$d%.7f"
+            val s1 = s0.substring(0, s0.length - 1)
+            if (s1 == "-0.000000") "0.000000" else s1
+        }
     }
 
     def p_e_string(): String => String = {
@@ -57,20 +60,40 @@ object Example {
 
     def main(args: Array[String]): Unit = {
         val p_e_out = Seq(
-            p_e_bool()(true),
-            p_e_int()(3),
-            p_e_double()(3.141592653),
-            p_e_double()(3.0),
-            p_e_string()("Hello, World!"),
-            p_e_string()("!@#$%^&*()\\\"\n\t"),
-            p_e_list(p_e_int())(Seq(1, 2, 3)),
-            p_e_list(p_e_bool())(Seq(true, false, true)),
-            p_e_ulist(p_e_int())(Seq(3, 2, 1)),
-            p_e_idict(p_e_string())(Map(1 -> "one", 2 -> "two")),
-            p_e_sdict(p_e_list(p_e_int()))(Map("one" -> Seq(1, 2, 3), "two" -> Seq(4, 5, 6))),
-            p_e_option(p_e_int())(Some(42)),
-            p_e_option(p_e_int())(None)
-        ).mkString("\n")
+                p_e_bool()(true),
+                p_e_bool()(false),
+                p_e_int()(3),
+                p_e_int()(-107),
+                p_e_double()(0.0),
+                p_e_double()(-0.0),
+                p_e_double()(3.0),
+                p_e_double()(31.4159265),
+                p_e_double()(123456.789),
+                p_e_string()("Hello, World!"),
+                p_e_string()("!@#$%^&*()[]{}<>:;,.'\"?|"),
+                p_e_string()("/\\\n\t"),
+                p_e_list(p_e_int())(Seq()),
+                p_e_list(p_e_int())(Seq(1, 2, 3)),
+                p_e_list(p_e_bool())(Seq(true, false, true)),
+                p_e_list(p_e_string())(Seq("apple", "banana", "cherry")),
+                p_e_list(p_e_list(p_e_int()))(Seq()),
+                p_e_list(p_e_list(p_e_int()))(Seq(Seq(1, 2, 3), Seq(4, 5, 6))),
+                p_e_ulist(p_e_int())(Seq(3, 2, 1)),
+                p_e_list(p_e_ulist(p_e_int()))(Seq(Seq(2, 1, 3), Seq(6, 5, 4))),
+                p_e_ulist(p_e_list(p_e_int()))(Seq(Seq(4, 5, 6), Seq(1, 2, 3))),
+                p_e_idict(p_e_int())(Map()),
+                p_e_idict(p_e_string())(Map(1 -> "one", 2 -> "two")),
+                p_e_sdict(p_e_int())(Map("one" -> 1, "two" -> 2)),
+                p_e_idict(p_e_list(p_e_int()))(Map()),
+                p_e_idict(p_e_list(p_e_int()))(Map(1 -> Seq(1, 2, 3), 2 -> Seq(4, 5, 6))),
+                p_e_sdict(p_e_list(p_e_int()))(Map("one" -> Seq(1, 2, 3), "two" -> Seq(4, 5, 6))),
+                p_e_list(p_e_idict(p_e_int()))(Seq(Map(1 -> 2), Map(3 -> 4))),
+                p_e_idict(p_e_idict(p_e_int()))(Map(1 -> Map(2 -> 3), 4 -> Map(5 -> 6))),
+                p_e_sdict(p_e_sdict(p_e_int()))(Map("one" -> Map("two" -> 3), "four" -> Map("five" -> 6))),
+                p_e_option(p_e_int())(Some(42)),
+                p_e_option(p_e_int())(None),
+                p_e_list(p_e_option(p_e_int()))(Seq(Some(1), None, Some(3)))
+            ).mkString("\n")
         new java.io.PrintWriter("stringify.out") { write(p_e_out); close }
     }
 }

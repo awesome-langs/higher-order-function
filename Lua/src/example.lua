@@ -1,10 +1,9 @@
 local function p_e_escape_string(s)
     local p_e_escape_char = function(c)
-        if c == '\r' then return "\\r" end
-        if c == '\n' then return "\\n" end
-        if c == '\t' then return "\\t" end
         if c == '\\' then return "\\\\" end
         if c == '\"' then return "\\\"" end
+        if c == '\n' then return "\\n" end
+        if c == '\t' then return "\\t" end
         return c
     end
     local t = {}
@@ -37,7 +36,9 @@ local function p_e_double()
         if type(d) ~= "number" then
             error()
         end
-        return string.format("%.6f", d)
+        local s0 = string.format("%.7f", d)
+        local s1 = s0:sub(1, #s0 - 1)
+        return s1 == "-0.000000" and "0.000000" or s1
     end
 end
 
@@ -119,18 +120,38 @@ end
 
 local p_e_out = table.concat({
     p_e_bool()(true),
+    p_e_bool()(false),
     p_e_int()(3),
-    p_e_double()(3.141592653),
+    p_e_int()(-107),
+    p_e_double()(0.0),
+    p_e_double()(-0.0),
     p_e_double()(3.0),
+    p_e_double()(31.4159265),
+    p_e_double()(123456.789),
     p_e_string()("Hello, World!"),
-    p_e_string()("!@#$%^&*()\\\"\n\t"),
+    p_e_string()("!@#$%^&*()[]{}<>:;,.'\"?|"),
+    p_e_string()("/\\\n\t"),
+    p_e_list(p_e_int())({}),
     p_e_list(p_e_int())({1, 2, 3}),
     p_e_list(p_e_bool())({true, false, true}),
+    p_e_list(p_e_string())({"apple", "banana", "cherry"}),
+    p_e_list(p_e_list(p_e_int()))({}),
+    p_e_list(p_e_list(p_e_int()))({{1, 2, 3}, {4, 5, 6}}),
     p_e_ulist(p_e_int())({3, 2, 1}),
+    p_e_list(p_e_ulist(p_e_int()))({{2, 1, 3}, {6, 5, 4}}),
+    p_e_ulist(p_e_list(p_e_int()))({{4, 5, 6}, {1, 2, 3}}),
+    p_e_idict(p_e_int())({}),
     p_e_idict(p_e_string())({[1] = "one", [2] = "two"}),
-    p_e_sdict(p_e_list(p_e_int()))({one = {1, 2, 3}, two = {4, 5, 6}}),
+    p_e_sdict(p_e_int())({["one"] = 1, ["two"] = 2}), 
+    p_e_idict(p_e_list(p_e_int()))({}),
+    p_e_idict(p_e_list(p_e_int()))({[1] = {1, 2, 3}, [2] = {4, 5, 6}}),
+    p_e_sdict(p_e_list(p_e_int()))({["one"] = {1, 2, 3}, ["two"] = {4, 5, 6}}),
+    p_e_list(p_e_idict(p_e_int()))({{[1] = 2}, {[3] = 4}}),
+    p_e_idict(p_e_idict(p_e_int()))({[1] = {[2] = 3}, [4] = {[5] = 6}}),
+    p_e_sdict(p_e_sdict(p_e_int()))({["one"] = {["two"] = 3}, ["four"] = {["five"] = 6}}),
     p_e_option(p_e_int())(42),
-    p_e_option(p_e_int())(nil)
+    p_e_option(p_e_int())(nil),
+    p_e_list(p_e_option(p_e_int()))({1, nil, 3})
 }, "\n")
 
 local writer = io.open("stringify.out", "w")

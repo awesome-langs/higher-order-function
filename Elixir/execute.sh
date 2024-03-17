@@ -1,1 +1,1 @@
-elixir src/example.ex
+ELIXIR_ERL_OPTIONS="+fnu" elixir src/example.ex

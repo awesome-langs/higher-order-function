@@ -3,5 +3,5 @@ let
   pkgs = import nixpkgs { config = {}; overlays = []; };
 in
 pkgs.mkShell {
-  packages = [ pkgs.elmPackages.elm pkgs.elmPackages.elm-format pkgs.nodejs_21 pkgs.corepack_21 pkgs.cacert ];
+  packages = [ pkgs.elmPackages.elm pkgs.nodejs_21 pkgs.corepack_21 pkgs.cacert ];
 }

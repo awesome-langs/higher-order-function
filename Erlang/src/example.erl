@@ -4,11 +4,10 @@
 p_e_escape_string(S) ->
     Pe__escape_char = fun(C) ->
         case C of
-            $\r -> "\\r";
-            $\n -> "\\n";
-            $\t -> "\\t";
             $\\ -> "\\\\";
             $" -> "\\\"";
+            $\n -> "\\n";
+            $\t -> "\\t";
             _ -> [C]
         end
     end,
@@ -39,7 +38,12 @@ p_e_double() ->
             true -> erlang:error();
             false -> ok
         end,
-        lists:flatten(io_lib:format("~.6f", [D]))
+        S0 = io_lib:format("~.7f", [D]),
+        S1 = string:slice(S0, 0, length(S0) - 1),
+        case S1 of
+            "-0.000000" -> "0.000000";
+            _ -> S1
+        end
     end.
 
 p_e_string() ->
@@ -92,26 +96,46 @@ p_e_sdict(F0) ->
 p_e_option(F0) ->
     fun(Opt) ->
         case Opt of
-            none -> "null";
+            undefined -> "null";
             X  -> F0(X)
         end
     end.
 
 main() ->
-    Pe__out = lists:join("\n", [
+    P_e_out = lists:join("\n", 
+            [
                 (p_e_bool())(true),
+                (p_e_bool())(false),
                 (p_e_int())(3),
-                (p_e_double())(3.141592653),
+                (p_e_int())(-107),
+                (p_e_double())(0.0),
+                (p_e_double())(-0.0),
                 (p_e_double())(3.0),
+                (p_e_double())(31.4159265),
+                (p_e_double())(123456.789),
                 (p_e_string())("Hello, World!"),
-                (p_e_string())("!@#$%^&*()\\\"\n\t"),
+                (p_e_string())("!@#$%^&*()[]{}<>:;,.'\"?|"),
+                (p_e_string())("/\\\n\t"),
+                (p_e_list(p_e_int()))([]),
                 (p_e_list(p_e_int()))([1, 2, 3]),
                 (p_e_list(p_e_bool()))([true, false, true]),
+                (p_e_list(p_e_string()))(["apple", "banana", "cherry"]),
+                (p_e_list(p_e_list(p_e_int())))([]),
+                (p_e_list(p_e_list(p_e_int())))([[1, 2, 3], [4, 5, 6]]),
                 (p_e_ulist(p_e_int()))([3, 2, 1]),
+                (p_e_list(p_e_ulist(p_e_int())))([[2, 1, 3], [6, 5, 4]]),
+                (p_e_ulist(p_e_list(p_e_int())))([[4, 5, 6], [1, 2, 3]]),
+                (p_e_idict(p_e_int()))(#{}),
                 (p_e_idict(p_e_string()))(#{1 => "one", 2 => "two"}),
+                (p_e_sdict(p_e_int()))(#{"one" => 1, "two" => 2}),
+                (p_e_idict(p_e_list(p_e_int())))(#{}),
+                (p_e_idict(p_e_list(p_e_int())))(#{1 => [1, 2, 3], 2 => [4, 5, 6]}),
                 (p_e_sdict(p_e_list(p_e_int())))(#{"one" => [1, 2, 3], "two" => [4, 5, 6]}),
+                (p_e_list(p_e_idict(p_e_int())))([#{1 => 2}, #{3 => 4}]),
+                (p_e_idict(p_e_idict(p_e_int())))(#{1 => #{2 => 3}, 4 => #{5 => 6}}),
+                (p_e_sdict(p_e_sdict(p_e_int())))(#{"one" => #{"two" => 3}, "four" => #{"five" => 6}}),
                 (p_e_option(p_e_int()))(42),
-                (p_e_option(p_e_int()))(none)
-            ]
-        ),
-    file:write_file("stringify.out", Pe__out).
+                (p_e_option(p_e_int()))(undefined),
+                (p_e_list(p_e_option(p_e_int())))([1, undefined, 3])
+            ]),
+    file:write_file("stringify.out", P_e_out).

@@ -7,6 +7,7 @@
 #include <optional>
 #include <functional> 
 #include <ranges>
+#include <format>
 
 using namespace std;
 using namespace std::literals;
@@ -17,7 +18,6 @@ string p_e_escapeString(string s) {
         if (c == '\"') return "\\\"";
         if (c == '\n') return "\\n";
         if (c == '\t') return "\\t";
-        if (c == '\r') return "\\r";
         return string(1, c);
     };
     // Commented code will be availabe in g++14
@@ -36,7 +36,11 @@ function<string(int)> p_e_int() {
 }
 
 function<string(double)> p_e_double() {
-    return [](auto d) { return to_string(d); };
+    return [](auto d) { 
+        string s0 = format("{:.7f}", d);
+        string s1 = s0.substr(0, s0.length() - 1);
+        return (s1 == "-0.000000") ? "0.000000" : s1;
+    };
 }
 
 function<string(string)> p_e_string() {
@@ -101,19 +105,39 @@ function<string(optional<V>)> p_e_option(function<string(V)> f0) {
 
 int main() {
     string p_e_out = ranges::fold_left(vector<string>{
-                p_e_bool()(true),
-                p_e_int()(3),
-                p_e_double()(3.141592653),
-                p_e_double()(3.0),
-                p_e_string()("Hello, World!"),
-                p_e_string()("!@#$%^&*()\\\"\n\t"),
-                p_e_list(p_e_int())(vector<int>{1, 2, 3}),
-                p_e_list(p_e_bool())(vector<bool>{true, false, true}),
-                p_e_ulist(p_e_int())(vector<int>{3, 2, 1}),
-                p_e_idict(p_e_string())(unordered_map<int, string>{{1, "one"}, {2, "two"}}),
-                p_e_sdict(p_e_list(p_e_int()))(unordered_map<string, vector<int>>{{"one", {1, 2, 3}}, {"two", {4, 5, 6}}}),
-                p_e_option(p_e_int())(optional<int>(42)),
-                p_e_option(p_e_int())(optional<int>())
-            } | views::join_with("\n"sv), string(), plus());
+            p_e_bool()(true),
+            p_e_bool()(false),
+            p_e_int()(3),
+            p_e_int()(-107),
+            p_e_double()(0.0),
+            p_e_double()(-0.0),
+            p_e_double()(3.0),
+            p_e_double()(31.4159265),
+            p_e_double()(123456.789),
+            p_e_string()("Hello, World!"),
+            p_e_string()("!@#$%^&*()[]{}<>:;,.'\"?|"),
+            p_e_string()("/\\\n\t"),
+            p_e_list(p_e_int())({}),
+            p_e_list(p_e_int())({1, 2, 3}),
+            p_e_list(p_e_bool())({true, false, true}),
+            p_e_list(p_e_string())({"apple", "banana", "cherry"}),
+            p_e_list(p_e_list(p_e_int()))({}),
+            p_e_list(p_e_list(p_e_int()))({{1, 2, 3}, {4, 5, 6}}),
+            p_e_ulist(p_e_int())({3, 2, 1}),
+            p_e_list(p_e_ulist(p_e_int()))({{2, 1, 3}, {6, 5, 4}}),
+            p_e_ulist(p_e_list(p_e_int()))({{4, 5, 6}, {1, 2, 3}}),
+            p_e_idict(p_e_int())({}),
+            p_e_idict(p_e_string())({{1, "one"}, {2, "two"}}),
+            p_e_sdict(p_e_int())({{"one", 1}, {"two", 2}}),
+            p_e_idict(p_e_list(p_e_int()))({}),
+            p_e_idict(p_e_list(p_e_int()))({{1, {1, 2, 3}}, {2, {4, 5, 6}}}),            
+            p_e_sdict(p_e_list(p_e_int()))({{"one", {1, 2, 3}}, {"two", {4, 5, 6}}}),
+            p_e_list(p_e_idict(p_e_int()))({{{1, 2}}, {{3, 4}}}),
+            p_e_idict(p_e_idict(p_e_int()))({{1, {{2, 3}}}, {4, {{5, 6}}}}),
+            p_e_sdict(p_e_sdict(p_e_int()))({{"one", {{"two", 3}}}, {"four", {{"five", 6}}}}),
+            p_e_option(p_e_int())(make_optional(42)),
+            p_e_option(p_e_int())(nullopt),
+            p_e_list(p_e_option(p_e_int()))({make_optional(1), nullopt, make_optional(3)})
+        } | views::join_with("\n"sv), string(), plus());
     ofstream("stringify.out") << p_e_out;
 }

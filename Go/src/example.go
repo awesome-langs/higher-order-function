@@ -10,20 +10,17 @@ import (
 
 func p_e_escapeString(s string) string {
     p_e_escapeChar := func(c rune) string {
-        if c == '\r' {
-            return "\\r"
+        if c == '\\' {
+            return "\\\\"
+        }
+        if c == '"' {
+            return "\\\""
         }
         if c == '\n' {
             return "\\n"
         }
         if c == '\t' {
             return "\\t"
-        }
-        if c == '\\' {
-            return "\\\\"
-        }
-        if c == '"' {
-            return "\\\""
         }
         return string(c)
     }
@@ -52,7 +49,13 @@ func p_e_int() func(int) string {
 
 func p_e_double() func(float64) string {
     return func(d float64) string {
-        return fmt.Sprintf("%.6f", d)
+        s0 := fmt.Sprintf("%.7f", d)
+        s1 := s0[:len(s0)-1]
+        if s1 == "-0.000000" {
+            return "0.000000"
+        } else {
+            return s1
+        }
     }
 }
 
@@ -124,18 +127,38 @@ func p_e_option[V any](f0 func(V) string) func(*V) string {
 func main() {
     p_e_out := strings.Join([]string{
         p_e_bool()(true),
+        p_e_bool()(false),
         p_e_int()(3),
-        p_e_double()(3.141592653),
+        p_e_int()(-107),
+        p_e_double()(0.0),
+        p_e_double()(-0.0),
         p_e_double()(3.0),
+        p_e_double()(31.4159265),
+        p_e_double()(123456.789),
         p_e_string()("Hello, World!"),
-        p_e_string()("!@#$%^&*()\\\"\n\t"),
+        p_e_string()("!@#$%^&*()[]{}<>:;,.'\"?|"),
+        p_e_string()("/\\\n\t"),
+        p_e_list(p_e_int())([]int{}),
         p_e_list(p_e_int())([]int{1, 2, 3}),
         p_e_list(p_e_bool())([]bool{true, false, true}),
+        p_e_list(p_e_string())([]string{"apple", "banana", "cherry"}),
+        p_e_list(p_e_list(p_e_int()))([][]int{}),
+        p_e_list(p_e_list(p_e_int()))([][]int{[]int{1, 2, 3}, []int{4, 5, 6}}),
         p_e_ulist(p_e_int())([]int{3, 2, 1}),
+        p_e_list(p_e_ulist(p_e_int()))([][]int{[]int{2, 1, 3}, []int{6, 5, 4}}),
+        p_e_ulist(p_e_list(p_e_int()))([][]int{[]int{4, 5, 6}, []int{1, 2, 3}}),
+        p_e_idict(p_e_int())(map[int]int{}),
         p_e_idict(p_e_string())(map[int]string{1: "one", 2: "two"}),
+        p_e_sdict(p_e_int())(map[string]int{"one": 1, "two": 2}),
+        p_e_idict(p_e_list(p_e_int()))(map[int][]int{}),
+        p_e_idict(p_e_list(p_e_int()))(map[int][]int{1: []int{1, 2, 3}, 2: []int{4, 5, 6}}),
         p_e_sdict(p_e_list(p_e_int()))(map[string][]int{"one": []int{1, 2, 3}, "two": []int{4, 5, 6}}),
-        p_e_option(p_e_int())(&[]int{3}[0]),
+        p_e_list(p_e_idict(p_e_int()))([]map[int]int{map[int]int{1: 2}, map[int]int{3: 4}}),
+        p_e_idict(p_e_idict(p_e_int()))(map[int]map[int]int{1: map[int]int{2: 3}, 4: map[int]int{5: 6}}),
+        p_e_sdict(p_e_sdict(p_e_int()))(map[string]map[string]int{"one": map[string]int{"two": 3}, "four": map[string]int{"five": 6}}),
+        p_e_option(p_e_int())(&[]int{42}[0]),        
         p_e_option(p_e_int())(nil),
+        p_e_list(p_e_option(p_e_int()))([]*int{&[]int{1}[0], nil, &[]int{3}[0]}),
     }, "\n")
     f, _ := os.Create("stringify.out")
     f.WriteString(p_e_out)
