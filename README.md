@@ -4,6 +4,7 @@ This repo include the usage of higher order function in 42 popular programming l
 
 ## Usage
 
+Requirement: nix.
+
 ```bash
-> nix-shel --pure
-> python run_all.py
+> nix-shell --pure --run "python run_all.py" 

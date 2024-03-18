@@ -34,7 +34,7 @@
 | Hack | hack | HHVM 4.164.0 | 2014 |
 | TypeScript | typescript, ts | TypeScript 5.4.2 | 2014 |
 | Swift | swift | Swift 5.8 | 2014 |
-| Rust | rust, rs | RustC-LLVM 1.73.0 | 2015 |
+| Rust | rust, rs | Rustc-LLVM 1.73.0 | 2015 |
 | Raku | perl6, raku | Rakudo 2023.08 | 2015 |
 | Kotlin | kotlin, kt | Kotlin 1.9.20 | 2016 |
 | ReasonML | reasonml, reason | Reason 3.10.0 + OCaml 4.14.1 | 2017 |
