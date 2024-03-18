@@ -87,5 +87,5 @@ my $p_e_out = [
         p_e_option(p_e_int()).(42),
         p_e_option(p_e_int()).(Nil),
         p_e_list(p_e_option(p_e_int())).([1, Nil, 3])
-    ].join("\n"),
+    ].join("\n");
 spurt "stringify.out", $p_e_out;

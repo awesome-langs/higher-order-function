@@ -99,6 +99,5 @@ void main() {
         p_e_option(p_e_int())(null),
         p_e_list(p_e_option(p_e_int()))([1, null, 3])
     ].join("\n");
-    var file = File("stringify.out");
-    file.writeAsStringSync(p_e_out);
+    var file = File("stringify.out").writeAsStringSync(p_e_out);
 }
