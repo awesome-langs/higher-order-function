@@ -1,1 +1,1 @@
-pnpm install && tsc && node dist/example.js
+pnpm install && tsc && node dist/example.mjs
