@@ -56,7 +56,7 @@ function p_e_sdict(f0)
 end
 
 function p_e_option(f0)
-    return (opt::Union{Any, Nothing}) -> isnothing(opt) ? "null" : f0(opt)
+    return (opt::Union{Any, Missing}) -> ismissing(opt) ? "null" : f0(opt)
 end
 
 p_e_out = join([
@@ -91,8 +91,8 @@ p_e_out = join([
     p_e_idict(p_e_idict(p_e_int()))(Dict(1 => Dict(2 => 3), 4 => Dict(5 => 6))),
     p_e_sdict(p_e_sdict(p_e_int()))(Dict("one" => Dict("two" => 3), "four" => Dict("five" => 6))),
     p_e_option(p_e_int())(42),
-    p_e_option(p_e_int())(nothing),
-    p_e_list(p_e_option(p_e_int()))([1, nothing, 3])
+    p_e_option(p_e_int())(missing),
+    p_e_list(p_e_option(p_e_int()))([1, missing, 3])
 ], "\n")
 
 open("stringify.out", "w") do writer
