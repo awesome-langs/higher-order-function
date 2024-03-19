@@ -12,7 +12,7 @@
 using namespace std;
 using namespace std::literals;
 
-string p_e_escapeString(string s) {
+string p_e_escapeString(const string& s) {
     auto p_e_escape_char = [](char c) -> string {
         if (c == '\\') return "\\\\";
         if (c == '\"') return "\\\"";

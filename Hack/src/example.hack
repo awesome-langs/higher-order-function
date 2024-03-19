@@ -76,7 +76,7 @@ function main(): void {
         p_e_double()(31.4159265),
         p_e_double()(123456.789),
         p_e_string()("Hello, World!"),
-        p_e_string()("!@#$%^&*()[]{}<>:;,.'\"?|"),
+        p_e_string()("!@#\$%^&*()[]{}<>:;,.'\"?|"),
         p_e_string()("/\\\n\t"),
         p_e_list(p_e_int())(vec[]),
         p_e_list(p_e_int())(vec[1, 2, 3]),
