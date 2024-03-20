@@ -44,8 +44,8 @@ fn p_e_ulist<V>(f0: impl Fn(&V) -> String) -> impl Fn(&Vec<V>) -> String {
 }
 
 fn p_e_idict<V>(f0: impl Fn(&V) -> String) -> impl Fn(&HashMap<i32, V>) -> String {
+    let f1 = move |(k, v): (&i32, &V)| format!("{}=>{}", p_e_int()(k), f0(v));
     move |dct| {
-        let f1 = move |(k, v)| format!("{}=>{}", p_e_int()(k), f0(v));
         let mut vs = dct.into_iter().map(&f1).collect::<Vec<String>>();
         vs.sort();
         format!("{{{}}}", vs.join(", "))
@@ -53,8 +53,8 @@ fn p_e_idict<V>(f0: impl Fn(&V) -> String) -> impl Fn(&HashMap<i32, V>) -> Strin
 }
 
 fn p_e_sdict<V>(f0: impl Fn(&V) -> String) -> impl Fn(&HashMap<String, V>) -> String {
+    let f1 = move |(k, v): (&String, &V)| format!("{}=>{}", p_e_string()(k), f0(v));
     move |dct| {
-        let f1 = |(k, v)| format!("{}=>{}", p_e_string()(k), f0(v));
         let mut vs = dct.into_iter().map(&f1).collect::<Vec<String>>();
         vs.sort();
         format!("{{{}}}", vs.join(", "))
