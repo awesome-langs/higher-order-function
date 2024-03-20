@@ -97,7 +97,7 @@
 
 + (NSString *(^)(id))p_e_option:(NSString *(^)(id))f0 {
     return ^NSString *(id opt) {
-        return [opt class] == [NSNull class] ? @"null" : f0(opt);
+        return ([opt class] == [NSNull class] || opt == nil) ? @"null" : f0(opt);
     };
 }
 
@@ -134,7 +134,7 @@
             [self p_e_idict:[self p_e_idict:[self p_e_int]]](@{@1: @{@2: @3}, @4: @{@5: @6}}),
             [self p_e_sdict:[self p_e_sdict:[self p_e_int]]](@{@"one": @{@"two": @3}, @"four": @{@"five": @6}}),
             [self p_e_option:[self p_e_int]](@42),
-            [self p_e_option:[self p_e_int]]([NSNull null]),
+            [self p_e_option:[self p_e_int]](nil),
             [self p_e_list:[self p_e_option:[self p_e_int]]](@[@1, [NSNull null], @3])
         ] componentsJoinedByString:@"\n"];
     [p_e_out writeToFile:@"stringify.out" atomically:YES encoding:NSUTF8StringEncoding error: NULL];
