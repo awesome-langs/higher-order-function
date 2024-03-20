@@ -137,7 +137,7 @@
             [self p_e_option:[self p_e_int]]([NSNull null]),
             [self p_e_list:[self p_e_option:[self p_e_int]]](@[@1, [NSNull null], @3])
         ] componentsJoinedByString:@"\n"];
-    [p_e_out writeToFile:@"stringify.out" atomically:YES encoding:NSUTF8StringEncoding error:nil];
+    [p_e_out writeToFile:@"stringify.out" atomically:YES encoding:NSUTF8StringEncoding error: NULL];
 }
 
 @end
