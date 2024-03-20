@@ -12,15 +12,15 @@ fn p_e_escape_string(s: String) -> String {
 }
 
 fn p_e_bool() -> impl Fn(bool) -> String {
-    move |b| if b { "true".to_string() } else { "false".to_string() }
+    |b| if b { "true".to_string() } else { "false".to_string() }
 }
 
 fn p_e_int() -> impl Fn(i32) -> String {
-    move |i| i.to_string()
+    |i| i.to_string()
 }
 
 fn p_e_double() -> impl Fn(f64) -> String {
-    move |d| {
+    |d| {
         let s0 = format!("{:.7}", d);
         let s1 = s0[..s0.len()-1].to_string();
         if s1 == "-0.000000" { "0.000000".to_string() } else { s1 }
@@ -28,7 +28,7 @@ fn p_e_double() -> impl Fn(f64) -> String {
 }
 
 fn p_e_string() -> impl Fn(String) -> String {
-    move |s| format!("\"{}\"", p_e_escape_string(s))
+    |s| format!("\"{}\"", p_e_escape_string(s))
 }
 
 fn p_e_list<V>(f0: impl Fn(V) -> String) -> impl Fn(Vec<V>) -> String {
