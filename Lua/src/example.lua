@@ -1,4 +1,4 @@
-local function p_e_escape_string(s)
+function p_e_escape_string(s)
     local p_e_escape_char = function(c)
         if c == '\\' then return "\\\\" end
         if c == '\"' then return "\\\"" end
@@ -13,7 +13,7 @@ local function p_e_escape_string(s)
     return table.concat(t)
 end
 
-local function p_e_bool()
+function p_e_bool()
     return function(b)
         if type(b) ~= "boolean" then
             error()
@@ -22,7 +22,7 @@ local function p_e_bool()
     end
 end
 
-local function p_e_int()
+function p_e_int()
     return function(i)
         if type(i) ~= "number" or math.floor(i) ~= i then
             error()
@@ -31,7 +31,7 @@ local function p_e_int()
     end
 end
 
-local function p_e_double()
+function p_e_double()
     return function(d)
         if type(d) ~= "number" then
             error()
@@ -42,7 +42,7 @@ local function p_e_double()
     end
 end
 
-local function p_e_string()
+function p_e_string()
     return function(s)
         if type(s) ~= "string" then
             error()
@@ -51,7 +51,7 @@ local function p_e_string()
     end
 end
 
-local function p_e_list(f0)
+function p_e_list(f0)
     return function(lst)
         if type(lst) ~= "table" then
             error()
@@ -64,7 +64,7 @@ local function p_e_list(f0)
     end
 end
 
-local function p_e_ulist(f0)
+function p_e_ulist(f0)
     return function(lst)
         if type(lst) ~= "table" then
             error()
@@ -78,7 +78,7 @@ local function p_e_ulist(f0)
     end
 end
 
-local function p_e_idict(f0)
+function p_e_idict(f0)
     local f1 = function(k, v)
         return p_e_int()(k) .. "=>" .. f0(v)
     end
@@ -95,7 +95,7 @@ local function p_e_idict(f0)
     end
 end
 
-local function p_e_sdict(f0)
+function p_e_sdict(f0)
     local f1 = function(k, v)
         return p_e_string()(k) .. "=>" .. f0(v)
     end
@@ -112,7 +112,7 @@ local function p_e_sdict(f0)
     end
 end
 
-local function p_e_option(f0)
+function p_e_option(f0)
     return function(opt)
         return opt and f0(opt) or "null"
     end
