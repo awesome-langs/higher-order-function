@@ -71,6 +71,7 @@ my $p_e_out = [
         p_e_list(p_e_bool()).([True, False, True]),
         p_e_list(p_e_string()).(["apple", "banana", "cherry"]),
         p_e_list(p_e_list(p_e_int())).([]),
+        p_e_list(p_e_list(p_e_int())).([[],[1,2,3]]),
         p_e_list(p_e_list(p_e_int())).([[1, 2, 3], [4, 5, 6]]),
         p_e_ulist(p_e_int()).([3, 2, 1]),
         p_e_list(p_e_ulist(p_e_int())).([[2, 1, 3], [6, 5, 4]]),

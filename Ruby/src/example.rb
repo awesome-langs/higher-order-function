@@ -88,7 +88,7 @@ p_e_out = [
         p_e_double().call(31.4159265),
         p_e_double().call(123456.789),
         p_e_string().call("Hello, World!"),
-        p_e_string().call("!@#$%^&*()[]{}<>:;,.'\"?|"),
+        p_e_string().call("!@\#$%^&*()[]{}<>:;,.'\"?|"),
         p_e_string().call("/\\\n\t"),
         p_e_list(p_e_int()).call([]),
         p_e_list(p_e_int()).call([1, 2, 3]),

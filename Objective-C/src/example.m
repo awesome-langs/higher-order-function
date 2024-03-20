@@ -140,11 +140,16 @@
     [p_e_out writeToFile:@"stringify.out" atomically:YES encoding:NSUTF8StringEncoding error: NULL];
 }
 
++ (void)p_e_main1:(int)num1 :(int)num2 :(int)num3 {  
+    int sum = num1 + num2 + num3;  
+    NSLog(@"The sum of %d, %d, and %d is %d", num1, num2, num3, sum);  
+}  
+
 @end
 
 int main() {
     @autoreleasepool {
-        [Example p_e_main];
+        [Example p_e_main1:1 :2 :3];
     }
     return 0;
 }
