@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-fn p_e_escape_string(s: String) -> String {
+fn p_e_escape_string(s: &String) -> String {
     let p_e_escape_char = |c: char| match c {
         '\\' => "\\\\".to_string(),
         '\"' => "\\\"".to_string(),
