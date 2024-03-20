@@ -28,7 +28,7 @@ fn p_e_double() -> impl Fn(f64) -> String {
 }
 
 fn p_e_string() -> impl Fn(String) -> String {
-    |s| format!("\"{}\"", p_e_escape_string(s))
+    |s| format!("\"{}\"", p_e_escape_string(&s))
 }
 
 fn p_e_list<V>(f0: impl Fn(V) -> String) -> impl Fn(Vec<V>) -> String {
